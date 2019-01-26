@@ -1,4 +1,4 @@
-const ticket ='HoagFKDcsGMVCIY2vOjf9v6M9KXW3KWy3Onjj7-vHwYA2y2AkMy_NxG5rjfleWC4nCXzD-e8XNBgkrMazI9PlA'
+const ticket ='HoagFKDcsGMVCIY2vOjf9v6M9KXW3KWy3Onjj7-vHwZVqyYBoGbbVIc2Am8DeTQZKppev5Y8ayqNX6hM6y2NNQ'
 const  timestamp=Date.now();
 const nonceStr = Math.random().toString(16).substr(2);
 const urlStr = location.href;

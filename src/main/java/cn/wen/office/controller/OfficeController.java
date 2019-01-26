@@ -15,7 +15,7 @@ import java.util.Map;
 @RequestMapping("/message")
 public class OfficeController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    @GetMapping("receive2")
+    @GetMapping("/receive2")
     public String  res(@RequestParam Map<String,String> allParams){
             logger.info("{}",allParams);
             String echostr = allParams.get("echostr");
