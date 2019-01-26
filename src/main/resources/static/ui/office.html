@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Title</title>
+    <link rel="stylesheet" href="assets/css/mintui.css">
+    <script src="assets/js/vconsole.min.js"></script>
+    <script>
+        var vConsole = new VConsole();
+    </script>
+</head>
+<body>
+    <div id="app">
+        <mt-button type="primary" @click="chooseImage">照片上传</mt-button>
+        <mt-button type="primary" @click="openLocation">打开地图</mt-button>
+        <mt-button type="primary" @click="scanQRCode">扫一扫</mt-button>
+        <mt-button type="primary" @click="up">录音</mt-button>
+    </div>
+<script src="assets/js/sha1.js"></script>
+<script src="assets/js/jweixin-1.4.0.js"></script>
+<script src="assets/js/axios.min.js"></script>
+<script src="assets/js/vue.js"></script>
+<script src="assets/js/mintui.js"></script>
+<script src="viewmodels/office.js"></script>
+</body>
+</html>
