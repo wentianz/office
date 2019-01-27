@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLEncoder;
 import java.util.Date;
 
 
@@ -69,7 +70,9 @@ public class OfficeController {
             throw new Exception("openID is Null, check accessToken");
         }
         User user = new User();
-        user.setNickname(userInfo.getString("nickname"));
+        //因数据存储可能乱码 对数据进行编码处理
+        String nickname = URLEncoder.encode(userInfo.getString("nickname"), "utf-8");
+        user.setNickname(nickname);
         user.setOpenid(openId);
         user.setAvatarUrl(userInfo.getString("headimgurl"));
         user.setGender(userInfo.getInteger("sex"));
