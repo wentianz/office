@@ -3,6 +3,7 @@ package cn.wen.office.controller;
 
 import cn.wen.office.dto.MessageAutoResponseDTO;
 import cn.wen.office.service.WeiXinClient;
+import cn.wen.office.service.impl.WeiXinClientImpl;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,7 @@ import java.util.Date;
 public class OfficeController {
 
     @Autowired
-    private WeiXinClient weiXinClient;
+    private WeiXinClientImpl weiXinClient;
     @Value("${weixin.accessToken}")
     private String accessToken;
 
@@ -30,13 +31,14 @@ public class OfficeController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping(value = "/receive2",produces = MediaType.APPLICATION_XML_VALUE)
     public Object  res(@RequestBody JSONObject messageReceiveDTO) throws Exception {
-        logger.info("{}","进入当前方法");
+        logger.info("{}",messageReceiveDTO);
         String msgType = messageReceiveDTO.getString("MsgType");
         if(msgType.equals("event")){
             String event = messageReceiveDTO.getString("Event");
             logger.info(event);
             if(event.equals("subscribe")){
                 String fromUserName = messageReceiveDTO.getString("FromUserName");
+                logger.info(fromUserName);
                 JSONObject userInfo = weiXinClient.getUserInfo(accessToken, fromUserName);
                 logger.info("{}",userInfo);
                 String openId = userInfo.getString("openid");
