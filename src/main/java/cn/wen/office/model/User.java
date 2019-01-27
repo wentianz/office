@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class User implements Serializable {
     private String openid;
 
-    private String nikeName;
+    private String nickname;
 
     private Integer gender;
 
@@ -21,12 +21,12 @@ public class User implements Serializable {
         this.openid = openid == null ? null : openid.trim();
     }
 
-    public String getNikeName() {
-        return nikeName;
+    public String getNickname() {
+        return nickname;
     }
 
-    public void setNikeName(String nikeName) {
-        this.nikeName = nikeName == null ? null : nikeName.trim();
+    public void setNickname(String nickname) {
+        this.nickname = nickname == null ? null : nickname.trim();
     }
 
     public Integer getGender() {
@@ -52,7 +52,7 @@ public class User implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", openid=").append(openid);
-        sb.append(", nikeName=").append(nikeName);
+        sb.append(", nickname=").append(nickname);
         sb.append(", gender=").append(gender);
         sb.append(", avatarUrl=").append(avatarUrl);
         sb.append(", serialVersionUID=").append(serialVersionUID);

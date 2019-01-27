@@ -3,8 +3,6 @@ package cn.wen.office.controller;
 
 import cn.wen.office.dto.MessageAutoResponseDTO;
 import cn.wen.office.model.User;
-import cn.wen.office.service.UserService;
-import cn.wen.office.service.WeiXinClient;
 import cn.wen.office.service.impl.UserServiceImpl;
 import cn.wen.office.service.impl.WeiXinClientImpl;
 import com.alibaba.fastjson.JSONObject;
@@ -15,8 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.soap.Text;
-import java.io.IOException;
 import java.util.Date;
 
 
@@ -73,7 +69,7 @@ public class OfficeController {
             throw new Exception("openID is Null, check accessToken");
         }
         User user = new User();
-        user.setNikeName(userInfo.getString("nickname"));
+        user.setNickname(userInfo.getString("nickname"));
         user.setOpenid(openId);
         user.setAvatarUrl(userInfo.getString("headimgurl"));
         user.setGender(userInfo.getInteger("sex"));

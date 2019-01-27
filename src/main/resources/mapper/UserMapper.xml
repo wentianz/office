@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.wen.office.mapper.UserMapper">
   <resultMap id="BaseResultMap" type="cn.wen.office.model.User">
-    <id column="openID" jdbcType="VARCHAR" property="openid" />
-    <result column="nike_name" jdbcType="VARCHAR" property="nikeName" />
+    <id column="openId" jdbcType="VARCHAR" property="openid" />
+    <result column="nickname" jdbcType="VARCHAR" property="nickname" />
     <result column="gender" jdbcType="INTEGER" property="gender" />
-    <result column="avatar_url" jdbcType="VARCHAR" property="avatarUrl" />
+    <result column="avatar_url" jdbcType="CHAR" property="avatarUrl" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    openID, nike_name, gender, avatar_url
+    openId, nickname, gender, avatar_url
   </sql>
   <select id="selectByExample" parameterType="cn.wen.office.model.UserExample" resultMap="BaseResultMap">
     select
@@ -86,11 +86,11 @@
     select 
     <include refid="Base_Column_List" />
     from user
-    where openID = #{openid,jdbcType=VARCHAR}
+    where openId = #{openid,jdbcType=VARCHAR}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from user
-    where openID = #{openid,jdbcType=VARCHAR}
+    where openId = #{openid,jdbcType=VARCHAR}
   </delete>
   <delete id="deleteByExample" parameterType="cn.wen.office.model.UserExample">
     delete from user
@@ -99,19 +99,19 @@
     </if>
   </delete>
   <insert id="insert" parameterType="cn.wen.office.model.User">
-    insert into user (openID, nike_name, gender, 
+    insert into user (openId, nickname, gender, 
       avatar_url)
-    values (#{openid,jdbcType=VARCHAR}, #{nikeName,jdbcType=VARCHAR}, #{gender,jdbcType=INTEGER}, 
-      #{avatarUrl,jdbcType=VARCHAR})
+    values (#{openid,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{gender,jdbcType=INTEGER}, 
+      #{avatarUrl,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="cn.wen.office.model.User">
     insert into user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="openid != null">
-        openID,
+        openId,
       </if>
-      <if test="nikeName != null">
-        nike_name,
+      <if test="nickname != null">
+        nickname,
       </if>
       <if test="gender != null">
         gender,
@@ -124,14 +124,14 @@
       <if test="openid != null">
         #{openid,jdbcType=VARCHAR},
       </if>
-      <if test="nikeName != null">
-        #{nikeName,jdbcType=VARCHAR},
+      <if test="nickname != null">
+        #{nickname,jdbcType=VARCHAR},
       </if>
       <if test="gender != null">
         #{gender,jdbcType=INTEGER},
       </if>
       <if test="avatarUrl != null">
-        #{avatarUrl,jdbcType=VARCHAR},
+        #{avatarUrl,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -145,16 +145,16 @@
     update user
     <set>
       <if test="record.openid != null">
-        openID = #{record.openid,jdbcType=VARCHAR},
+        openId = #{record.openid,jdbcType=VARCHAR},
       </if>
-      <if test="record.nikeName != null">
-        nike_name = #{record.nikeName,jdbcType=VARCHAR},
+      <if test="record.nickname != null">
+        nickname = #{record.nickname,jdbcType=VARCHAR},
       </if>
       <if test="record.gender != null">
         gender = #{record.gender,jdbcType=INTEGER},
       </if>
       <if test="record.avatarUrl != null">
-        avatar_url = #{record.avatarUrl,jdbcType=VARCHAR},
+        avatar_url = #{record.avatarUrl,jdbcType=CHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -163,10 +163,10 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update user
-    set openID = #{record.openid,jdbcType=VARCHAR},
-      nike_name = #{record.nikeName,jdbcType=VARCHAR},
+    set openId = #{record.openid,jdbcType=VARCHAR},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
       gender = #{record.gender,jdbcType=INTEGER},
-      avatar_url = #{record.avatarUrl,jdbcType=VARCHAR}
+      avatar_url = #{record.avatarUrl,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -174,23 +174,23 @@
   <update id="updateByPrimaryKeySelective" parameterType="cn.wen.office.model.User">
     update user
     <set>
-      <if test="nikeName != null">
-        nike_name = #{nikeName,jdbcType=VARCHAR},
+      <if test="nickname != null">
+        nickname = #{nickname,jdbcType=VARCHAR},
       </if>
       <if test="gender != null">
         gender = #{gender,jdbcType=INTEGER},
       </if>
       <if test="avatarUrl != null">
-        avatar_url = #{avatarUrl,jdbcType=VARCHAR},
+        avatar_url = #{avatarUrl,jdbcType=CHAR},
       </if>
     </set>
-    where openID = #{openid,jdbcType=VARCHAR}
+    where openId = #{openid,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="cn.wen.office.model.User">
     update user
-    set nike_name = #{nikeName,jdbcType=VARCHAR},
+    set nickname = #{nickname,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=INTEGER},
-      avatar_url = #{avatarUrl,jdbcType=VARCHAR}
-    where openID = #{openid,jdbcType=VARCHAR}
+      avatar_url = #{avatarUrl,jdbcType=CHAR}
+    where openId = #{openid,jdbcType=VARCHAR}
   </update>
 </mapper>
