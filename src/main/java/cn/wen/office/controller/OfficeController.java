@@ -35,7 +35,7 @@ public class OfficeController {
         if(msgType.equals("event")){
             String event = messageReceiveDTO.getString("Event");
             logger.info(event);
-            if(event.equals("")){
+            if(event.equals("subscribe")){
                 String fromUserName = messageReceiveDTO.getString("FromUserName");
                 JSONObject userInfo = weiXinClient.getUserInfo(accessToken, fromUserName);
                 logger.info("{}",userInfo);
