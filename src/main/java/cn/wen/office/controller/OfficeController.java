@@ -5,6 +5,7 @@ import cn.wen.office.dto.MessageAutoResponseDTO;
 import cn.wen.office.model.User;
 import cn.wen.office.service.UserService;
 import cn.wen.office.service.WeiXinClient;
+import cn.wen.office.service.impl.UserServiceImpl;
 import cn.wen.office.service.impl.WeiXinClientImpl;
 import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
@@ -27,7 +28,9 @@ public class OfficeController {
     private WeiXinClientImpl weiXinClient;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
+
+
     @Value("${weixin.accessToken}")
     private String accessToken;
 
