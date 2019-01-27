@@ -3,17 +3,21 @@ package cn.wen.office.service.impl;
 import cn.wen.office.api.WeiXinApi;
 import cn.wen.office.service.WeiXinClient;
 import com.alibaba.fastjson.JSONObject;
+import jdk.nashorn.internal.ir.annotations.Reference;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
 
 import java.io.IOException;
 
+
+@Component
 public class WeiXinClientImpl implements WeiXinClient {
 
     private WeiXinApi weiXinApi;
 
-    @Value("${mp.AppId}")
+    @Value("${mp.appId}")
     private String appId;
 
     @Value("${mp.secret}")
