@@ -6,6 +6,8 @@ import cn.wen.office.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
    @Autowired
@@ -14,5 +16,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public void create(User user) {
             userMapper.insert(user);
+    }
+
+    @Override
+    public List fetchList() {
+        return userMapper.selectByExample(null);
     }
 }
