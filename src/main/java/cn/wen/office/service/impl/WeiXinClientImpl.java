@@ -8,15 +8,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.fastjson.FastJsonConverterFactory;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 
 
 @Component
 public class WeiXinClientImpl implements WeiXinClient {
 
+    private Retrofit retrofit;
     private WeiXinApi weiXinApi;
-
+    public WeiXinClientImpl(@Value("${weixin.baseUrl}") String url) throws MalformedURLException {
+        retrofit = new Retrofit.Builder()
+                .baseUrl(url)
+                .addConverterFactory(FastJsonConverterFactory.create())
+                .build();
+        weiXinApi = retrofit.create(WeiXinApi.class);
+    }
     @Value("${mp.appId}")
     private String appId;
 
