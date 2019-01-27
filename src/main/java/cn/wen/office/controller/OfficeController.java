@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.util.Date;
 
@@ -29,11 +30,11 @@ public class OfficeController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping(value = "/receive2",produces = MediaType.APPLICATION_XML_VALUE)
     public Object  res(@RequestBody JSONObject messageReceiveDTO) throws Exception {
-
         logger.info("{}","进入当前方法");
         String msgType = messageReceiveDTO.getString("MsgType");
         if(msgType.equals("event")){
             String event = messageReceiveDTO.getString("Event");
+            logger.info(event);
             if(event.equals("")){
                 String fromUserName = messageReceiveDTO.getString("FromUserName");
                 JSONObject userInfo = weiXinClient.getUserInfo(accessToken, fromUserName);
@@ -46,10 +47,12 @@ public class OfficeController {
                 messageAutoResponseDTO.setToUserName(fromUserName);
                 messageAutoResponseDTO.setFromUserName(messageReceiveDTO.getString("ToUserName"));
                 messageAutoResponseDTO.setCreateTime(new Date().getTime());
+                messageAutoResponseDTO.setMsgType("text");
                 messageAutoResponseDTO.setContent("你好,"+userInfo.getString("nickname")+" 欢迎订阅文十二");
                 return  messageAutoResponseDTO;
             }
         }
+        logger.info("无效");
         return "a";
     }
 }
