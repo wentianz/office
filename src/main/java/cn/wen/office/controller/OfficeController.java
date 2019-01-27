@@ -29,6 +29,8 @@ public class OfficeController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping(value = "/receive2",produces = MediaType.APPLICATION_XML_VALUE)
     public Object  res(@RequestBody JSONObject messageReceiveDTO) throws Exception {
+
+        logger.info("{}","进入当前方法");
         String msgType = messageReceiveDTO.getString("MsgType");
         if(msgType.equals("event")){
             String event = messageReceiveDTO.getString("Event");
