@@ -1,21 +1,53 @@
 package cn.wen.office.controller;
 
 
-import cn.wen.office.common.CommonResult;
+import cn.wen.office.dto.MessageAutoResponseDTO;
+import cn.wen.office.service.WeiXinClient;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.Date;
+
 
 @RestController
 @RequestMapping("/message")
 public class OfficeController {
+
+    @Autowired
+    private WeiXinClient weiXinClient;
+    @Value("${weixin.accessToken}")
+    private String accessToken;
+
+
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
-    @PostMapping("/receive2")
-    public String  res(@RequestParam Map<String,String> allParams){
-            logger.info("{}",allParams);
-            String echostr = allParams.get("echostr");
-            return echostr;
+    @PostMapping(value = "/receive2",produces = MediaType.APPLICATION_XML_VALUE)
+    public Object  res(@RequestBody JSONObject messageReceiveDTO) throws Exception {
+        String msgType = messageReceiveDTO.getString("MsgType");
+        if(msgType.equals("event")){
+            String event = messageReceiveDTO.getString("Event");
+            if(event.equals("")){
+                String fromUserName = messageReceiveDTO.getString("FromUserName");
+                JSONObject userInfo = weiXinClient.getUserInfo(accessToken, fromUserName);
+                logger.info("{}",userInfo);
+                String openId = userInfo.getString("openid");
+                if(openId==null|| openId.equals("")){
+                    throw new Exception("openID is Null, check accessToken");
+                }
+                MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
+                messageAutoResponseDTO.setToUserName(fromUserName);
+                messageAutoResponseDTO.setFromUserName(messageReceiveDTO.getString("ToUserName"));
+                messageAutoResponseDTO.setCreateTime(new Date().getTime());
+                messageAutoResponseDTO.setContent("你好,"+userInfo.getString("nickname")+" 欢迎订阅文十二");
+                return  messageAutoResponseDTO;
+            }
+        }
+        return "a";
     }
 }
