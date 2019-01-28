@@ -49,7 +49,7 @@ public class WeixinAccessTokenTask {
         weiXinApi = retrofit.create(WeiXinApi.class);
     }
     // 第一次延迟1秒执行，当执行完后5400秒再执行
-    @Scheduled(initialDelay = 1000, fixedDelay = 5400*1000)
+    @Scheduled(initialDelay = 1000, fixedDelay = 5600*1000)
     public void getWeiXinAccessToken() throws IOException {
         Call<JSONObject> token = weiXinApi.getAccessToken(appId, secret, "client_credential");
         JSONObject body = token.execute().body();
