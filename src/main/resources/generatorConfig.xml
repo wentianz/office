@@ -62,7 +62,8 @@
         <table  tableName="tb_admin" domainObjectName="Admin"/>
         <table  tableName="tb_category" domainObjectName="Category"/>
 -->
-        <table  tableName="user" domainObjectName="User"/>
+        <table  tableName="check_in_out_record"/>
+        <!--<table  tableName="user" domainObjectName="User"/>-->
         <!--<table tableName="%">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>-->

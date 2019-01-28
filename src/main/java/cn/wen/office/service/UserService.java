@@ -11,5 +11,5 @@ public interface UserService {
 
     List fetchList();
 
-    void checkInOut(String fromUserName, Date date);
+    void checkInOut(String fromUserName, Date date, Integer status);
 }

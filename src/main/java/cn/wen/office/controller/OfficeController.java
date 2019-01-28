@@ -93,6 +93,7 @@ public class OfficeController {
         String positionUserKey = "position" + fromUserName;
         Double latitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "latitude");
         Double longitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "longitude");
+        logger.info("{}",latitude,longitude);
         DegreeCoordinate lat = Coordinate.fromDegrees(latitude);
         DegreeCoordinate lng = Coordinate.fromDegrees(longitude);
         //用户所在位置
@@ -120,16 +121,16 @@ public class OfficeController {
         LocalTime time = now.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
         LocalTime onWorkStart = LocalTime.parse("08:00:00");
         LocalTime onWorkEnd = LocalTime.parse("09:00:00");
-        LocalTime offWorkStart = LocalTime.parse("06:00:00");
-        LocalTime offWorkEnd = LocalTime.parse("09:00:00");
+        LocalTime offWorkStart = LocalTime.parse("14:00:00");
+        LocalTime offWorkEnd = LocalTime.parse("19:00:00");
         String content = "";
 
         if (time.isAfter(onWorkStart) && time.isBefore(onWorkEnd)) {
-            content = new Date() + "上班打卡成功";
-            userService.checkInOut(fromUserName, new Date());
+            content = new Date()+ "上班打卡成功";
+            userService.checkInOut(fromUserName,new Date(),0);
         } else if (time.isAfter(offWorkStart) && time.isBefore(offWorkEnd)) {
             content = new Date() + "下班打卡成功";
-            userService.checkInOut(fromUserName, new Date());
+            userService.checkInOut(fromUserName, new Date(),1);
         } else {
             content = "不在打开时间内";
         }
