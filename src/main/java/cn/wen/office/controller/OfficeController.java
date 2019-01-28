@@ -38,9 +38,16 @@ public class OfficeController {
     private UserServiceImpl userService;
     @Autowired
     private RedisTemplate redisTemplate;
-
-    @Value("${weixin.accessToken}")
     private String accessToken;
+    public void setAccessToken(String accessToken) {
+        logger.info("当前值为：：：：",redisTemplate.opsForValue().get("access_token"));
+        this.accessToken = (String) redisTemplate.opsForValue().get("access_token");
+    }
+
+    public WeiXinClientImpl getWeiXinClient() {
+        return weiXinClient;
+    }
+
     @Value("${checkInOut.latitude}")
     private Double checkLatitude;
     @Value("${checkInOut.longitude}")
