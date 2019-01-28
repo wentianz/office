@@ -40,11 +40,9 @@ public class OfficeController {
     @Autowired
     private RedisTemplate redisTemplate;
     @Autowired
-    WeixinAccessTokenTask weixinAccessTokenTask;/*
-    public void setAccessToken(String accessToken) {
-        logger.info("",redisTemplate.opsForValue().get("access_token"));
-        this.accessToken = (String) redisTemplate.opsForValue().get("access_token");
-    }*/
+    WeixinAccessTokenTask weixinAccessTokenTask;
+
+
     @Value("${checkInOut.latitude}")
     private Double checkLatitude;
     @Value("${checkInOut.longitude}")
