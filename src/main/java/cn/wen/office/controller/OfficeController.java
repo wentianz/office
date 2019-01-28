@@ -116,9 +116,9 @@ public class OfficeController {
         //位置距离 单位为 m
         double distance = EarthCalc.harvesineDistance(userCurrentPostion, checkPostion);
 
-        if (distance > 50.00D) {
+        if (distance > 100.00D) {
             MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
-            messageAutoResponseDTO.setContent("不再打卡范围、换个位置试试");
+            messageAutoResponseDTO.setContent("不在打卡范围、换个位置试试");
             return messageAutoResponseDTO;
         }
         Date now = new Date();
@@ -138,7 +138,7 @@ public class OfficeController {
             redisTemplate.opsForValue().set("ClockInLimit"+fromUserName,fromUserName);
             redisTemplate.expire("ClockInLimit"+fromUserName,20,TimeUnit.HOURS);
         } else {
-            content = "不在打卡时间内";
+            content = "不在打卡时间内、有点早哦";
         }
         MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
         messageAutoResponseDTO.setToUserName(fromUserName);
