@@ -90,6 +90,15 @@ public class OfficeController {
 
     private MessageAutoResponseDTO checkInOut(@RequestBody JSONObject messageReceiveDTO) {
         String fromUserName = messageReceiveDTO.getString("FromUserName");
+
+        //判断当天是否已经打卡
+        String clockInLimitKey="ClockInLimit"+fromUserName;
+        String  status = (String) redisTemplate.opsForValue().get(clockInLimitKey);
+        if(status!=null&&status.equals(fromUserName)){
+            MessageAutoResponseDTO autoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
+            autoResponseDTO.setContent("已打卡");
+            return  autoResponseDTO;
+        }
         String positionUserKey = "position" + fromUserName;
         Double latitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "latitude");
         Double longitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "longitude");
@@ -108,15 +117,10 @@ public class OfficeController {
         double distance = EarthCalc.harvesineDistance(userCurrentPostion, checkPostion);
 
         if (distance > 50.00D) {
-            MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-            messageAutoResponseDTO.setToUserName(fromUserName);
-            messageAutoResponseDTO.setFromUserName(messageReceiveDTO.getString("ToUserName"));
-            messageAutoResponseDTO.setCreateTime(new Date().getTime());
-            messageAutoResponseDTO.setMsgType("text");
+            MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
             messageAutoResponseDTO.setContent("不再打卡范围、换个位置试试");
             return messageAutoResponseDTO;
         }
-
         Date now = new Date();
         LocalTime time = now.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
         LocalTime onWorkStart = LocalTime.parse("08:00:00");
@@ -126,13 +130,15 @@ public class OfficeController {
         String content = "";
 
         if (time.isAfter(onWorkStart) && time.isBefore(onWorkEnd)) {
-            content = new Date()+ "上班打卡成功";
+            content = new Date()+ "上班打卡成功+Ծ‸ Ծ ";
             userService.checkInOut(fromUserName,new Date(),0);
         } else if (time.isAfter(offWorkStart) && time.isBefore(offWorkEnd)) {
-            content = new Date() + "下班打卡成功";
+            content = new Date()+ "下班打卡成功+ค(TㅅT)";
             userService.checkInOut(fromUserName, new Date(),1);
+            redisTemplate.opsForValue().set("ClockInLimit"+fromUserName,fromUserName);
+            redisTemplate.expire("ClockInLimit"+fromUserName,20,TimeUnit.HOURS);
         } else {
-            content = "不在打开时间内";
+            content = "不在打卡时间内";
         }
         MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
         messageAutoResponseDTO.setToUserName(fromUserName);
@@ -141,6 +147,15 @@ public class OfficeController {
         messageAutoResponseDTO.setCreateTime(new Date().getTime());
         messageAutoResponseDTO.setMsgType("text");
         messageAutoResponseDTO.setContent(content);
+        return messageAutoResponseDTO;
+    }
+
+    private MessageAutoResponseDTO getMessageAutoResponseDTO(@RequestBody JSONObject messageReceiveDTO, String fromUserName) {
+        MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
+        messageAutoResponseDTO.setToUserName(fromUserName);
+        messageAutoResponseDTO.setFromUserName(messageReceiveDTO.getString("ToUserName"));
+        messageAutoResponseDTO.setCreateTime(new Date().getTime());
+        messageAutoResponseDTO.setMsgType("text");
         return messageAutoResponseDTO;
     }
 
@@ -162,11 +177,7 @@ public class OfficeController {
         user.setGender(userInfo.getInteger("sex"));
         userService.create(user);
         logger.info("{}", user);
-        MessageAutoResponseDTO messageAutoResponseDTO = new MessageAutoResponseDTO();
-        messageAutoResponseDTO.setToUserName(fromUserName);
-        messageAutoResponseDTO.setFromUserName(messageReceiveDTO.getString("ToUserName"));
-        messageAutoResponseDTO.setCreateTime(new Date().getTime());
-        messageAutoResponseDTO.setMsgType("text");
+        MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
         messageAutoResponseDTO.setContent("你好," + userInfo.getString("nickname") + " 欢迎订阅文十二");
         return messageAutoResponseDTO;
     }
