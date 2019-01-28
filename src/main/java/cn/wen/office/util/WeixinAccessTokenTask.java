@@ -20,12 +20,23 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class WeixinAccessTokenTask {
-    @Autowired
-    RedisTemplate redisTemplate;
+ /*   @Autowired
+    RedisTemplate redisTemplate;*/
     @Value("${mp.appId}")
     private String appId;
     @Value("${mp.secret}")
     private String secret;
+
+
+    private String accessToken;
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     Logger logger = LoggerFactory.getLogger(WeixinAccessTokenTask.class);
     private Retrofit retrofit;
@@ -40,12 +51,12 @@ public class WeixinAccessTokenTask {
     // 第一次延迟1秒执行，当执行完后7100秒再执行
     @Scheduled(initialDelay = 1000, fixedDelay = 10*1000 )
     public void getWeiXinAccessToken() throws IOException {
-
-            Call<JSONObject> token = weiXinApi.getAccessToken(appId, secret, "client_credential");
+        Call<JSONObject> token = weiXinApi.getAccessToken(appId, secret, "client_credential");
         JSONObject body = token.execute().body();
         logger.info("获取到的微信access_token为"+body.getString("access_token"));
-        redisTemplate.opsForValue().set("access_token",body.getString("access_token"));
-        redisTemplate.expire("access_token",100, TimeUnit.MINUTES);
+      /*  redisTemplate.opsForValue().set("access_token",body.getString("access_token"));
+        redisTemplate.expire("access_token",100, TimeUnit.MINUTES);*/
+        accessToken=body.getString("access_token");
     }
 
 }

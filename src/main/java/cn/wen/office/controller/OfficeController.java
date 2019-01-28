@@ -5,6 +5,7 @@ import cn.wen.office.dto.MessageAutoResponseDTO;
 import cn.wen.office.model.User;
 import cn.wen.office.service.impl.UserServiceImpl;
 import cn.wen.office.service.impl.WeiXinClientImpl;
+import cn.wen.office.util.WeixinAccessTokenTask;
 import com.alibaba.fastjson.JSONObject;
 import com.grum.geocalc.Coordinate;
 import com.grum.geocalc.DegreeCoordinate;
@@ -38,12 +39,16 @@ public class OfficeController {
     private UserServiceImpl userService;
     @Autowired
     private RedisTemplate redisTemplate;
-
+    @Autowired
+    WeixinAccessTokenTask weixinAccessTokenTask;/*
+    public void setAccessToken(String accessToken) {
+        logger.info("",redisTemplate.opsForValue().get("access_token"));
+        this.accessToken = (String) redisTemplate.opsForValue().get("access_token");
+    }*/
     @Value("${checkInOut.latitude}")
     private Double checkLatitude;
     @Value("${checkInOut.longitude}")
     private Double checkLongitude;
-    private String accessToken= (String) redisTemplate.opsForValue().get("access_token");
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -161,7 +166,7 @@ public class OfficeController {
 
     private MessageAutoResponseDTO subscribe(JSONObject messageReceiveDTO) throws Exception {
         String fromUserName = messageReceiveDTO.getString("FromUserName");
-        JSONObject userInfo = weiXinClient.getUserInfo(accessToken, fromUserName);
+        JSONObject userInfo = weiXinClient.getUserInfo(weixinAccessTokenTask.getAccessToken(), fromUserName);
         logger.info("{}", userInfo);
         String openId = userInfo.getString("openid");
         if (openId == null || openId.equals("")) {
