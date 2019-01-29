@@ -94,9 +94,11 @@ public class OfficeController {
         String fromUserName = messageReceiveDTO.getString("FromUserName");
 
         //判断当天是否已经打卡
-        String clockInLimitKey="ClockInLimit"+fromUserName;
-        String  status = (String) redisTemplate.opsForValue().get(clockInLimitKey);
-        if(status!=null&&status.equals(fromUserName)){
+        String onClockInLimitKey="onClockInLimit"+fromUserName;
+        String offClockInLimitKey="offClockInLimit"+fromUserName;
+        String  onStatus = (String) redisTemplate.opsForValue().get(onClockInLimitKey);
+        String  offStatus = (String) redisTemplate.opsForValue().get(onClockInLimitKey);
+        if(onStatus!=null&&onStatus.equals(fromUserName)|| offStatus!=null&&offStatus.equals(fromUserName)  ){
             MessageAutoResponseDTO autoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
             autoResponseDTO.setContent("已打卡");
             return  autoResponseDTO;
@@ -126,7 +128,7 @@ public class OfficeController {
         Date now = new Date();
         LocalTime time = now.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
         LocalTime onWorkStart = LocalTime.parse("08:00:00");
-        LocalTime onWorkEnd = LocalTime.parse("09:00:00");
+        LocalTime onWorkEnd = LocalTime.parse("10:00:00");
         LocalTime offWorkStart = LocalTime.parse("14:00:00");
         LocalTime offWorkEnd = LocalTime.parse("19:00:00");
         String content = "";
@@ -134,11 +136,13 @@ public class OfficeController {
         if (time.isAfter(onWorkStart) && time.isBefore(onWorkEnd)) {
             content = new Date()+ "上班打卡成功+Ծ‸ Ծ ";
             userService.checkInOut(fromUserName,new Date(),0);
+            redisTemplate.opsForValue().set("onClockInLimit"+fromUserName,fromUserName);
+            redisTemplate.expire("onClockInLimit"+fromUserName,20,TimeUnit.HOURS);
         } else if (time.isAfter(offWorkStart) && time.isBefore(offWorkEnd)) {
             content = new Date()+ "下班打卡成功+ค(TㅅT)";
             userService.checkInOut(fromUserName, new Date(),1);
-            redisTemplate.opsForValue().set("ClockInLimit"+fromUserName,fromUserName);
-            redisTemplate.expire("ClockInLimit"+fromUserName,20,TimeUnit.HOURS);
+            redisTemplate.opsForValue().set("offClockInLimit"+fromUserName,fromUserName);
+            redisTemplate.expire("offClockInLimit"+fromUserName,20,TimeUnit.HOURS);
         } else {
             content = "不在打卡时间内、有点早哦";
         }
