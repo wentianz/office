@@ -97,7 +97,7 @@ public class OfficeController {
         String onClockInLimitKey="onClockInLimit"+fromUserName;
         String offClockInLimitKey="offClockInLimit"+fromUserName;
         String  onStatus = (String) redisTemplate.opsForValue().get(onClockInLimitKey);
-        String  offStatus = (String) redisTemplate.opsForValue().get(onClockInLimitKey);
+        String  offStatus = (String) redisTemplate.opsForValue().get(offClockInLimitKey);
         if(onStatus!=null&&onStatus.equals(fromUserName) && offStatus!=null&&offStatus.equals(fromUserName)  ){
             MessageAutoResponseDTO autoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
             autoResponseDTO.setContent("已打卡");
