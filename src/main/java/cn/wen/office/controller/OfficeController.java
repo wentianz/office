@@ -62,18 +62,9 @@ public class OfficeController {
                 //用户订阅
                 return subscribe(messageReceiveDTO);
             }
-            //获取用户地理位置
+            //事件为获取用户地理位置
             if (event.equals("LOCATION")) {
-                String fromUserName = messageReceiveDTO.getString("FromUserName");
-                Double latitude = messageReceiveDTO.getDouble("Latitude");
-                Double longitude = messageReceiveDTO.getDouble("Longitude");
-                JSONObject position = new JSONObject();
-                position.put("latitude", latitude);
-                position.put("longitude", longitude);
-                String postionUserKey = "position" + fromUserName;
-                redisTemplate.opsForHash().putAll(postionUserKey, position);
-                redisTemplate.expire(postionUserKey, 50000, TimeUnit.MILLISECONDS);
-                return "success";
+                return getLocation(messageReceiveDTO);
             }
             //用户点击菜单
             if (event.equals("CLICK")) {
@@ -87,26 +78,36 @@ public class OfficeController {
             }
         }
         logger.info("无效");
-        return "a";
+        return "success";
+    }
+
+    private Object getLocation(@RequestBody JSONObject messageReceiveDTO) {
+        String fromUserName = messageReceiveDTO.getString("FromUserName");
+        Double latitude = messageReceiveDTO.getDouble("Latitude");
+        Double longitude = messageReceiveDTO.getDouble("Longitude");
+        JSONObject position = new JSONObject();
+        position.put("latitude", latitude);
+        position.put("longitude", longitude);
+        String postionUserKey = "position" + fromUserName;
+        redisTemplate.opsForHash().putAll(postionUserKey, position);
+        redisTemplate.expire(postionUserKey, 50000, TimeUnit.MILLISECONDS);
+        return "success";
     }
 
     private MessageAutoResponseDTO checkInOut(@RequestBody JSONObject messageReceiveDTO) {
         String fromUserName = messageReceiveDTO.getString("FromUserName");
-
         //判断当天是否已经打卡
-        String onClockInLimitKey="onClockInLimit"+fromUserName;
-        String offClockInLimitKey="offClockInLimit"+fromUserName;
-        String  onStatus = (String) redisTemplate.opsForValue().get(onClockInLimitKey);
-        String  offStatus = (String) redisTemplate.opsForValue().get(offClockInLimitKey);
-        if(onStatus!=null&&onStatus.equals(fromUserName) && offStatus!=null&&offStatus.equals(fromUserName)  ){
+        String clockInLimit="clockInLimit"+fromUserName;
+        String  status = (String) redisTemplate.opsForValue().get(clockInLimit);
+        if( status!=null || status.equals(fromUserName)){
             MessageAutoResponseDTO autoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
-            autoResponseDTO.setContent("已打卡");
+            autoResponseDTO.setContent("该时间段已打卡");
             return  autoResponseDTO;
         }
         String positionUserKey = "position" + fromUserName;
         Double latitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "latitude");
         Double longitude = (Double) redisTemplate.opsForHash().get(positionUserKey, "longitude");
-        logger.info("{}",latitude,longitude);
+        logger.info("{}", latitude, longitude);
         DegreeCoordinate lat = Coordinate.fromDegrees(latitude);
         DegreeCoordinate lng = Coordinate.fromDegrees(longitude);
         //用户所在位置
@@ -128,21 +129,20 @@ public class OfficeController {
         Date now = new Date();
         LocalTime time = now.toInstant().atZone(ZoneId.systemDefault()).toLocalTime();
         LocalTime onWorkStart = LocalTime.parse("08:00:00");
-        LocalTime onWorkEnd = LocalTime.parse("10:00:00");
+        LocalTime onWorkEnd = LocalTime.parse("12:00:00");
         LocalTime offWorkStart = LocalTime.parse("14:00:00");
         LocalTime offWorkEnd = LocalTime.parse("19:00:00");
         String content = "";
-
         if (time.isAfter(onWorkStart) && time.isBefore(onWorkEnd)) {
-            content = new Date()+ "上班打卡成功+Ծ‸ Ծ ";
-            userService.checkInOut(fromUserName,new Date(),0);
-            redisTemplate.opsForValue().set("onClockInLimit"+fromUserName,fromUserName);
-            redisTemplate.expire("onClockInLimit"+fromUserName,20,TimeUnit.HOURS);
+            content = new Date() + "上班打卡成功+Ծ‸ Ծ ";
+            userService.checkInOut(fromUserName, new Date(), 0);
+            redisTemplate.opsForValue().set("clockInLimit"+fromUserName,fromUserName);
+            redisTemplate.expire("clockInLimit"+fromUserName,60,TimeUnit.MINUTES);
         } else if (time.isAfter(offWorkStart) && time.isBefore(offWorkEnd)) {
-            content = new Date()+ "下班打卡成功+ค(TㅅT)";
-            userService.checkInOut(fromUserName, new Date(),1);
-            redisTemplate.opsForValue().set("offClockInLimit"+fromUserName,fromUserName);
-            redisTemplate.expire("offClockInLimit"+fromUserName,20,TimeUnit.HOURS);
+            content = new Date() + "下班打卡成功+ค(TㅅT)";
+            userService.checkInOut(fromUserName, new Date(), 1);
+            redisTemplate.opsForValue().set("clockInLimit"+fromUserName,fromUserName);
+            redisTemplate.expire("clockInLimit"+fromUserName,60,TimeUnit.MINUTES);
         } else {
             content = "不在打卡时间内、有点早哦";
         }
@@ -184,7 +184,7 @@ public class OfficeController {
         userService.create(user);
         logger.info("{}", user);
         MessageAutoResponseDTO messageAutoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
-        messageAutoResponseDTO.setContent("你好," + userInfo.getString("nickname") + " 欢迎订阅文十二");
+        messageAutoResponseDTO.setContent("你好," + userInfo.getString("nickname") + " 欢迎订阅文十二 \n 若要使用打卡功能请先开启位置服务");
         return messageAutoResponseDTO;
     }
 }
