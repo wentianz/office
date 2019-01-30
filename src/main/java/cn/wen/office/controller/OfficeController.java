@@ -80,7 +80,6 @@ public class OfficeController {
         logger.info("无效");
         return "success";
     }
-
     private Object getLocation(@RequestBody JSONObject messageReceiveDTO) {
         String fromUserName = messageReceiveDTO.getString("FromUserName");
         Double latitude = messageReceiveDTO.getDouble("Latitude");
@@ -93,13 +92,12 @@ public class OfficeController {
         redisTemplate.expire(postionUserKey, 50000, TimeUnit.MILLISECONDS);
         return "success";
     }
-
     private MessageAutoResponseDTO checkInOut(@RequestBody JSONObject messageReceiveDTO) {
         String fromUserName = messageReceiveDTO.getString("FromUserName");
         //判断当天是否已经打卡
         String clockInLimit="clockInLimit"+fromUserName;
         String  status = (String) redisTemplate.opsForValue().get(clockInLimit);
-        if( status!=null || status.equals(fromUserName)){
+        if( status == null){
             MessageAutoResponseDTO autoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
             autoResponseDTO.setContent("该时间段已打卡");
             return  autoResponseDTO;
