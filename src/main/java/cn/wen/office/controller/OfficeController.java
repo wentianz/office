@@ -97,7 +97,7 @@ public class OfficeController {
         //判断当天是否已经打卡
         String clockInLimit="clockInLimit"+fromUserName;
         String  status = (String) redisTemplate.opsForValue().get(clockInLimit);
-        if( status == null){
+        if(status != null){
             MessageAutoResponseDTO autoResponseDTO = getMessageAutoResponseDTO(messageReceiveDTO, fromUserName);
             autoResponseDTO.setContent("该时间段已打卡");
             return  autoResponseDTO;
